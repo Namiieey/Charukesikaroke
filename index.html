@@ -4,326 +4,275 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Charukesi Karoke Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
-
         body {
-            background: linear-gradient(145deg, #0b0f1c 0%, #1a1f33 100%);
+            font-family: 'Lora', serif;
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4c3b3' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: #3e2723;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            margin: 0;
         }
 
-        .karaoke-card {
-            max-width: 900px;
-            width: 100%;
-            background: rgba(20, 26, 42, 0.9);
-            backdrop-filter: blur(12px);
-            border-radius: 3rem 3rem 2.5rem 2.5rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 0 2px #2e3b4e inset, 0 0 20px #5e7b9e33;
-            padding: 2rem 2rem 2.5rem;
-            transition: all 0.2s ease;
-            border: 1px solid #4c5b74;
+        h1, h2, h3, .font-serif-title {
+            font-family: 'Playfair Display', serif;
         }
 
-        .app-header {
-            text-align: center;
-            margin-bottom: 2.2rem;
+        /* Traditional Container */
+        .classic-panel {
+            background-color: #ffffff;
+            border: 1px solid #e0d4c8;
+            box-shadow: 0 10px 30px -5px rgba(92, 64, 51, 0.1), 0 0 0 1px rgba(92, 64, 51, 0.05);
             position: relative;
         }
-
-        .app-header h1 {
-            font-size: 2.6rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #f9e0a0, #f5c542, #d4a017);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 4px 12px rgba(212, 160, 23, 0.3);
-            display: inline-block;
-            padding: 0 1rem;
-            border-bottom: 3px solid #f5c54266;
-            padding-bottom: 0.5rem;
+        
+        .classic-panel::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            bottom: 6px;
+            border: 1px solid rgba(139, 69, 19, 0.15);
+            pointer-events: none;
+            border-radius: inherit;
         }
 
-        .app-header .sub {
-            color: #a0b8d4;
-            font-size: 0.95rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 0.5rem;
-            font-weight: 400;
-            opacity: 0.9;
+        .active-song {
+            background-color: #fcf6f0;
+            border-left: 4px solid #8b4513;
+            box-shadow: inset 0 0 10px rgba(139, 69, 19, 0.05);
         }
 
-        .playlist {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        /* Record spinning animation */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinning {
+            animation: spin 8s linear infinite;
         }
 
-        .track-item {
-            background: #1f2a3f;
-            border-radius: 2rem;
-            padding: 1.4rem 1.8rem 1.4rem 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 8px 0 #0f121b, 0 10px 20px -5px #00000080;
-            border: 1px solid #415a77;
-            transition: transform 0.1s ease, box-shadow 0.2s ease;
-        }
-
-        .track-item:hover {
-            box-shadow: 0 8px 0 #0f121b, 0 12px 28px -5px #f5c54240;
-            border-color: #f5c54299;
-        }
-
-        .track-info {
-            display: flex;
-            align-items: center;
-            gap: 1.2rem;
-            flex: 2 1 260px;
-            min-width: 0;
-        }
-
-        .track-number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #f5c542;
-            text-shadow: 0 2px 0 #6b4e0e;
-            width: 2.4rem;
-            text-align: center;
-            background: #0b0f1c;
-            border-radius: 50px;
-            padding: 0.1rem 0;
-            line-height: 1.4;
-        }
-
-        .track-name {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: #eef5ff;
-            letter-spacing: -0.2px;
-            word-break: break-word;
-            line-height: 1.3;
-            text-shadow: 0 2px 4px #00000050;
-        }
-
-        .audio-wrapper {
-            flex: 3 1 340px;
-            min-width: 240px;
-            margin-left: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            background: #0e1320;
-            padding: 0.4rem 0.8rem 0.4rem 0.8rem;
-            border-radius: 100px;
-            box-shadow: inset 0 4px 8px #00000080, 0 2px 0 #364a62;
-            border: 1px solid #2e3f56;
-        }
-
-        audio {
-            width: 100%;
-            height: 48px;
-            border-radius: 60px;
-            background: #0e1320;
-            outline: none;
-            flex: 1;
-        }
-
-        /* Custom audio player styling (works for WebKit & Firefox) */
+        /* Custom Audio Player Styling for Light Theme */
         audio::-webkit-media-controls-panel {
-            background: #1d2b3f;
-            border-radius: 60px;
-            padding: 0 8px;
+            background-color: #f5efe6;
+            border-radius: 4px;
+            border: 1px solid #e0d4c8;
         }
-
-        audio::-webkit-media-controls-play-button,
-        audio::-webkit-media-controls-mute-button {
-            background-color: #f5c542;
-            border-radius: 50%;
-            transform: scale(0.9);
-        }
-
         audio::-webkit-media-controls-current-time-display,
         audio::-webkit-media-controls-time-remaining-display {
-            color: #d9e6ff;
-            font-weight: 500;
-            font-size: 0.8rem;
+            color: #5c4033;
+            font-family: 'Lora', serif;
         }
 
-        audio::-webkit-media-controls-volume-slider {
-            background-color: #f5c542;
-            border-radius: 10px;
+        /* Custom scrollbar */
+        .playlist-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .playlist-container::-webkit-scrollbar-track {
+            background: #fdfbf7;
+            border-left: 1px solid #e0d4c8;
+        }
+        .playlist-container::-webkit-scrollbar-thumb {
+            background: #d4c3b3;
+        }
+        .playlist-container::-webkit-scrollbar-thumb:hover {
+            background: #8b4513;
         }
 
-        audio::-webkit-media-controls-timeline {
-            background-color: #2e4a6b;
-            border-radius: 10px;
-        }
-
-        /* Firefox */
-        audio {
-            filter: drop-shadow(0 4px 6px #00000040);
-        }
-
-        .footer-note {
-            text-align: center;
-            color: #6b85a3;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            margin-top: 1.2rem;
-            border-top: 1px dashed #2e405b;
-            padding-top: 1.5rem;
-            font-weight: 400;
-        }
-
-        .footer-note span {
-            color: #f5c542;
-            font-weight: 500;
-        }
-
-        @media (max-width: 700px) {
-            .karaoke-card {
-                padding: 1.5rem 1.2rem 2rem;
-                border-radius: 2rem;
-            }
-
-            .app-header h1 {
-                font-size: 2rem;
-            }
-
-            .track-item {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1rem;
-                padding: 1.4rem 1.2rem;
-            }
-
-            .track-info {
-                justify-content: flex-start;
-            }
-
-            .audio-wrapper {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .track-number {
-                font-size: 1.5rem;
-                width: 2rem;
-            }
-
-            .track-name {
-                font-size: 1.2rem;
-            }
-        }
-
-        @media (max-width: 420px) {
-            .track-info {
-                gap: 0.8rem;
-            }
-
-            .track-name {
-                font-size: 1rem;
-            }
-
-            .audio-wrapper {
-                padding: 0.3rem 0.5rem;
-            }
+        /* Decorative flourishes */
+        .flourish {
+            color: #b59b85;
+            font-size: 1.2rem;
         }
     </style>
 </head>
-<body>
-    <main class="karaoke-card">
-        <div class="app-header">
-            <h1>Charukesi Karoke Online</h1>
-            <div class="sub">✦ sing along ✦</div>
-        </div>
+<body class="flex items-center justify-center p-4 sm:p-8">
 
-        <div class="playlist">
-            <!-- Track 1 -->
-            <div class="track-item">
-                <div class="track-info">
-                    <span class="track-number">1</span>
-                    <span class="track-name">Pazhani malai murugante</span>
-                </div>
-                <div class="audio-wrapper">
-                    <audio controls src="https://mp3tourl.com/audio/1791532102208-f01aaf17-f9dc-4283-9dfb-adc2d97b62bc.mp3" preload="none">
-                        Link text
-                    </audio>
+    <div class="classic-panel w-full max-w-4xl rounded-sm p-8 sm:p-12 flex flex-col md:flex-row gap-12">
+        
+        <!-- Player Section -->
+        <div class="w-full md:w-1/2 flex flex-col items-center justify-center space-y-8 relative">
+            
+            <!-- App Title -->
+            <div class="text-center w-full mb-2 border-b-2 border-double border-[#d4c3b3] pb-6">
+                <span class="flourish block mb-2">❦</span>
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-wide text-[#5c4033] mb-1">
+                    Charukesi Karoke
+                </h1>
+                <p class="text-[#8b4513] text-sm uppercase tracking-widest font-semibold italic">Online Player</p>
+            </div>
+
+            <!-- Central Art -->
+            <div class="relative w-48 h-48 sm:w-56 sm:h-56 rounded-full border border-[#d4c3b3] p-2 bg-[#fdfbf7] shadow-md flex items-center justify-center">
+                <div class="absolute inset-2 rounded-full border border-dashed border-[#b59b85]"></div>
+                
+                <!-- Center Graphic -->
+                <div id="record-art" class="w-32 h-32 rounded-full bg-[#f5efe6] border border-[#e0d4c8] z-10 flex items-center justify-center shadow-inner transition-transform duration-500 text-[#8b4513]">
+                    <i class="fa-solid fa-om text-5xl opacity-80"></i>
                 </div>
             </div>
 
-            <!-- Track 2 -->
-            <div class="track-item">
-                <div class="track-info">
-                    <span class="track-number">2</span>
-                    <span class="track-name">Sangeethame</span>
-                </div>
-                <div class="audio-wrapper">
-                    <audio controls src="https://mp3tourl.com/audio/1791532199724-e64a908b-ac2a-4858-b9fd-a955b9660843.mp3" preload="none">
-                        Link text
-                    </audio>
-                </div>
+            <!-- Current Track Info -->
+            <div class="text-center space-y-2 w-full pt-4">
+                <h2 id="current-title" class="text-2xl font-semibold text-[#3e2723] truncate px-4">Select a composition</h2>
+                <p class="text-[#8b4513] text-sm italic font-medium">Ready to play</p>
             </div>
 
-            <!-- Track 3 -->
-            <div class="track-item">
-                <div class="track-info">
-                    <span class="track-number">3</span>
-                    <span class="track-name">Kali Badrakali</span>
-                </div>
-                <div class="audio-wrapper">
-                    <audio controls src="https://mp3tourl.com/audio/1791532235918-bf00dae2-001d-476b-a9a1-4ff1ea7f5e2f.mp3" preload="none">
-                        Link text
-                    </audio>
-                </div>
-            </div>
-
-            <!-- Track 4 -->
-            <div class="track-item">
-                <div class="track-info">
-                    <span class="track-number">4</span>
-                    <span class="track-name">Shanmugha sodari</span>
-                </div>
-                <div class="audio-wrapper">
-                    <audio controls src="https://mp3tourl.com/audio/1791532286659-0200176d-22db-4fe8-8368-e483403fd71c.mp3" preload="none">
-                        Link text
-                    </audio>
-                </div>
+            <!-- Audio Element -->
+            <div class="w-full pt-2">
+                <audio id="main-audio" controls class="w-full" preload="metadata">
+                    Your browser does not support the audio element.
+                </audio>
             </div>
         </div>
 
-        <div class="footer-note">
-            <span>🎤</span> Charukesi Karoke · sing with joy <span>🎤</span>
+        <!-- Playlist Section -->
+        <div class="w-full md:w-1/2 flex flex-col h-[500px]">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-[#d4c3b3]">
+                <h3 class="text-xl font-bold text-[#5c4033] flex items-center gap-2">
+                    <span class="flourish text-sm">❧</span> Compositions
+                </h3>
+                <span class="text-[#8b4513] text-sm font-semibold italic">
+                    4 Tracks
+                </span>
+            </div>
+
+            <ul id="playlist" class="playlist-container flex-1 overflow-y-auto space-y-2 pr-2 pb-4">
+                <!-- Playlist items injected via JS -->
+            </ul>
         </div>
-    </main>
+    </div>
+
+    <script>
+        // Track data
+        const tracks = [
+            {
+                id: 1,
+                title: "Pazhani malai murugante",
+                src: "https://mp3tourl.com/audio/1791532102208-f01aaf17-f9dc-4283-9dfb-adc2d97b62bc.mp3"
+            },
+            {
+                id: 2,
+                title: "Sangeethame",
+                src: "https://mp3tourl.com/audio/1791532199724-e64a908b-ac2a-4858-b9fd-a955b9660843.mp3"
+            },
+            {
+                id: 3,
+                title: "Kali Badrakali",
+                src: "https://mp3tourl.com/audio/1791532235918-bf00dae2-001d-476b-a9a1-4ff1ea7f5e2f.mp3"
+            },
+            {
+                id: 4,
+                title: "Shanmugha sodari",
+                src: "https://mp3tourl.com/audio/1791532286659-0200176d-22db-4fe8-8368-e483403fd71c.mp3"
+            }
+        ];
+
+        let currentTrackIndex = -1;
+
+        // DOM Elements
+        const audioEl = document.getElementById('main-audio');
+        const playlistEl = document.getElementById('playlist');
+        const currentTitleEl = document.getElementById('current-title');
+        const recordArt = document.getElementById('record-art');
+
+        function renderPlaylist() {
+            playlistEl.innerHTML = '';
+            
+            tracks.forEach((track, index) => {
+                const li = document.createElement('li');
+                li.className = `group flex items-center justify-between p-4 cursor-pointer transition-all duration-300 hover:bg-[#f5efe6] border-b border-dashed border-[#e0d4c8] last:border-0 ${currentTrackIndex === index ? 'active-song' : ''}`;
+                li.onclick = () => loadAndPlayTrack(index);
+
+                li.innerHTML = `
+                    <div class="flex items-center gap-4 w-full">
+                        <div class="w-8 flex justify-center text-[#b59b85] font-serif-title transition-colors ${currentTrackIndex === index ? 'text-[#8b4513]' : ''}">
+                            ${currentTrackIndex === index ? 
+                                '<i class="fa-solid fa-music fa-fade text-sm"></i>' : 
+                                `<span class="font-bold text-lg">${index + 1}.</span>`
+                            }
+                        </div>
+                        <div class="flex-1 truncate">
+                            <h4 class="font-semibold text-[#5c4033] group-hover:text-[#3e2723] truncate transition-colors ${currentTrackIndex === index ? 'text-[#8b4513]' : ''}">
+                                ${track.title}
+                            </h4>
+                        </div>
+                        <button class="text-[#b59b85] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:text-[#8b4513]">
+                            <i class="fa-solid ${currentTrackIndex === index && !audioEl.paused ? 'fa-pause' : 'fa-play'}"></i>
+                        </button>
+                    </div>
+                `;
+                playlistEl.appendChild(li);
+            });
+        }
+
+        function loadAndPlayTrack(index) {
+            const track = tracks[index];
+            
+            // If clicking the currently playing track, toggle play/pause
+            if (currentTrackIndex === index) {
+                if (audioEl.paused) {
+                    audioEl.play();
+                } else {
+                    audioEl.pause();
+                }
+                return;
+            }
+
+            // Load new track
+            currentTrackIndex = index;
+            audioEl.src = track.src;
+            currentTitleEl.textContent = track.title;
+            
+            // Play track
+            audioEl.play().catch(e => console.log("Autoplay blocked, waiting for user interaction.", e));
+            
+            // Re-render playlist to update active state
+            renderPlaylist();
+        }
+
+        // Event Listeners for Audio Element
+        audioEl.addEventListener('play', () => {
+            recordArt.classList.add('spinning');
+            renderPlaylist(); // Update play/pause icon in playlist
+        });
+
+        audioEl.addEventListener('pause', () => {
+            recordArt.classList.remove('spinning');
+            renderPlaylist(); // Update play/pause icon in playlist
+        });
+
+        audioEl.addEventListener('ended', () => {
+            // Auto-play next track
+            if (currentTrackIndex < tracks.length - 1) {
+                loadAndPlayTrack(currentTrackIndex + 1);
+            } else {
+                recordArt.classList.remove('spinning');
+                renderPlaylist();
+            }
+        });
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderPlaylist();
+            
+            // Preload first track title without playing
+            if(tracks.length > 0) {
+                audioEl.src = tracks[0].src;
+                currentTitleEl.textContent = tracks[0].title;
+                currentTrackIndex = 0;
+                renderPlaylist();
+            }
+        });
+    </script>
 </body>
-</html>i",      artist: "Karoke Track", src: "https://sufficient-lavender-grfcmggi.edgeone.dev/" },
-    { title: "Pazhanimalai Murugante", artist: "Karoke Track", src: "https://soviet-coral-tm5eyrih.edgeone.dev/" },
-    { title: "Kali Badrakali",         artist: "Karoke Track", src: "https://hilarious-tomato-pqcysod9.edgeone.dev/" },
-    { title: "Sangeethame",            artist: "Karoke Track", src: "https://genetic-silver-7epglid9.edgeone.dev/" }
-  ];
-
-  const audio       = document.getElementById('audio');
-  const playBtn     = document.getElementById('play');
-  const playIcon    = document.getElementById('playIcon');
-  const prevBtn     = document.getElementById('prev');
-  const nextBtn     = document.getElementById('next');
+</html>
+```   = document.getElementById('next');
   const seek        = document.getElementById('seek');
   const volume      = document.getElementById('volume');
   const current     = document.getElementById('current');
