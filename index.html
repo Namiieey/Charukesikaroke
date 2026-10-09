@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
@@ -22,16 +22,19 @@
                             200: '#ebdccd',
                             300: '#debfab',
                             400: '#ce9d80',
-                            500: '#a67c52', // Primary accent
+                            500: '#a67c52',
                             600: '#8e6641',
                             700: '#765236',
-                            800: '#5c4a3d', // Primary text
+                            800: '#5c4a3d',
                             900: '#4a3b32',
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         serif: ['Playfair Display', 'serif'],
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
                     }
                 }
             }
@@ -39,479 +42,329 @@
     </script>
 
     <style>
-        /* Custom sleek range slider styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
+        body {
+            background-color: #fdfbf7;
+            background-image: radial-gradient(#ebdccd 1px, transparent 1px);
+            background-size: 32px 32px;
         }
 
-        input[type=range]::-webkit-slider-thumb {
+        /* Custom Audio Slider */
+        .audio-slider {
             -webkit-appearance: none;
-            height: 12px;
-            width: 12px;
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+        }
+
+        .audio-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: #a67c52;
             cursor: pointer;
-            margin-top: -4px;
-            box-shadow: 0 0 0 4px rgba(166, 124, 82, 0.1);
+            box-shadow: 0 0 10px rgba(166, 124, 82, 0.4);
             transition: transform 0.1s;
         }
 
-        input[type=range]::-webkit-slider-thumb:hover {
+        .audio-slider::-webkit-slider-thumb:hover {
             transform: scale(1.2);
         }
 
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: #ebdccd;
-            border-radius: 2px;
-        }
-
-        input[type=range]:focus {
-            outline: none;
-        }
-
-        /* Firefox styles */
-        input[type=range]::-moz-range-thumb {
-            height: 12px;
-            width: 12px;
+        .audio-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: #a67c52;
             cursor: pointer;
             border: none;
-            box-shadow: 0 0 0 4px rgba(166, 124, 82, 0.1);
+            box-shadow: 0 0 10px rgba(166, 124, 82, 0.4);
+        }
+
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(235, 220, 205, 0.5);
         }
         
-        input[type=range]::-moz-range-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: #ebdccd;
-            border-radius: 2px;
+        .record-art.playing {
+            animation: spin 10s linear infinite;
         }
         
-        .glass-header {
-            background: rgba(253, 251, 247, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="bg-brown-50 text-brown-800 font-sans antialiased min-h-screen flex flex-col selection:bg-brown-200 selection:text-brown-900">
+<body class="text-brown-800 font-sans antialiased min-h-screen flex flex-col selection:bg-brown-200 selection:text-brown-900">
 
-    <header class="glass-header sticky top-0 z-50 border-b border-brown-200 shadow-sm">
-        <div class="max-w-5xl mx-auto px-6 py-4 flex items-center gap-4 sm:gap-6">
+    <header class="glass-panel sticky top-0 z-50 border-b border-brown-200 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-center sm:justify-start gap-4">
             <img src="https://plain-apac-prod-public.komododecks.com/202610/09/DNGr604lqMrOHA75SINW/image.jpg" 
-                 alt="Charukesi Sangeetha Nritha Kalakshetram Logo" 
-                 class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover shadow-md border-2 border-white">
-            <div>
-                <h1 class="font-serif text-xl sm:text-2xl font-semibold text-brown-900 tracking-wide">Charukesi</h1>
-                <p class="text-xs sm:text-sm font-medium text-brown-600 uppercase tracking-widest mt-0.5">Sangeetha Nritha Kalakshetram</p>
+                 alt="Charukesi Logo" 
+                 class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover shadow-md border-2 border-white">
+            <div class="text-center sm:text-left">
+                <h1 class="font-serif text-xl sm:text-2xl font-bold text-brown-900 tracking-wide">Charukesi</h1>
+                <p class="text-[10px] sm:text-xs font-semibold text-brown-600 uppercase tracking-[0.2em] mt-0.5">Sangeetha Nritha Kalakshetram</p>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow max-w-4xl mx-auto w-full px-6 py-12 sm:py-16">
-        <div class="text-center mb-12 sm:mb-16">
-            <h2 class="font-serif text-3xl sm:text-4xl font-semibold text-brown-900 mb-4">Karaoke Collection</h2>
-            <p class="text-brown-600 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
-                Immerse yourself in our curated selection of classical and devotional accompaniments. Practice, perform, and perfect your musical journey.
-            </p>
+    <main class="flex-grow w-full max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+        
+        <!-- Player Section -->
+        <div class="w-full lg:w-1/2 glass-panel rounded-3xl p-6 sm:p-10 shadow-xl flex flex-col items-center">
+            
+            <!-- Record Art -->
+            <div class="relative w-48 h-48 sm:w-64 sm:h-64 mb-8">
+                <div class="absolute inset-0 rounded-full bg-gradient-to-br from-brown-200 to-brown-400 shadow-2xl animate-pulse opacity-20"></div>
+                <img id="record-art" src="https://plain-apac-prod-public.komododecks.com/202610/09/DNGr604lqMrOHA75SINW/image.jpg" 
+                     alt="Record Art" 
+                     class="relative w-full h-full rounded-full object-cover border-4 border-white shadow-[0_10px_30px_rgba(92,74,61,0.2)] transition-transform duration-500">
+                <!-- Record center hole -->
+                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full border border-brown-200 shadow-inner z-10"></div>
+            </div>
+
+            <!-- Track Info -->
+            <div class="text-center w-full mb-8">
+                <h2 id="current-title" class="font-serif text-2xl sm:text-3xl font-bold text-brown-900 mb-2 truncate px-4">Select a Track</h2>
+                <p class="text-sm font-medium text-brown-500 tracking-wider uppercase">Classical Karaoke</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full flex flex-col mb-8">
+                <div class="flex justify-between text-xs font-semibold text-brown-500 mb-2 px-1">
+                    <span id="current-time">0:00</span>
+                    <span id="duration-time">0:00</span>
+                </div>
+                <div class="relative w-full h-1.5 bg-brown-200 rounded-full flex items-center">
+                    <!-- Custom progress fill -->
+                    <div id="progress-fill" class="absolute left-0 top-0 h-full bg-brown-500 rounded-full pointer-events-none" style="width: 0%;"></div>
+                    <input type="range" id="progress-bar" class="audio-slider absolute w-full h-full opacity-0" value="0" min="0" max="100" step="0.1">
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex items-center justify-center gap-6 sm:gap-8">
+                <button id="btn-prev" class="text-brown-400 hover:text-brown-700 transition-colors p-2 rounded-full hover:bg-brown-100" aria-label="Previous Track">
+                    <i class="ph-fill ph-skip-back text-3xl"></i>
+                </button>
+                
+                <button id="btn-play" class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center rounded-full bg-brown-500 text-white shadow-lg shadow-brown-500/30 hover:bg-brown-600 hover:scale-105 transition-all duration-300" aria-label="Play/Pause">
+                    <i id="play-icon" class="ph-fill ph-play text-3xl sm:text-4xl ml-1"></i>
+                </button>
+                
+                <button id="btn-next" class="text-brown-400 hover:text-brown-700 transition-colors p-2 rounded-full hover:bg-brown-100" aria-label="Next Track">
+                    <i class="ph-fill ph-skip-forward text-3xl"></i>
+                </button>
+            </div>
+            
+            <!-- Hidden Audio Element -->
+            <audio id="main-audio" preload="metadata"></audio>
         </div>
 
-        <div class="space-y-6" id="track-list">
+        <div class="w-full lg:w-1/2 flex flex-col h-full">
+            <h3 class="font-serif text-xl sm:text-2xl font-bold text-brown-900 mb-6 px-2">Playlist</h3>
             
-            <!-- Track 1 -->
-            <div class="track-card bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(166,124,82,0.06)] border border-brown-100 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(166,124,82,0.12)] hover:-translate-y-1">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                    <button class="play-btn group flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-full bg-brown-50 text-brown-500 hover:bg-brown-500 hover:text-white transition-all duration-300 shadow-sm border border-brown-100" aria-label="Play Shanmugha sodari">
-                        <i class="ph-fill ph-play text-2xl transition-transform group-hover:scale-110"></i>
-                    </button>
-                    
-                    <div class="flex-grow">
-                        <h3 class="text-lg font-medium text-brown-900 mb-1">Shanmugha Sodari</h3>
-                        <p class="text-sm text-brown-500 mb-3">Classical / Devotional</p>
-                        
-                        <div class="flex items-center gap-4">
-                            <span class="text-xs font-medium text-brown-400 w-10 text-right current-time">0:00</span>
-                            <input type="range" class="progress-bar flex-grow" value="0" max="100">
-                            <span class="text-xs font-medium text-brown-400 w-10 duration-time">--:--</span>
-                        </div>
-                    </div>
-                </div>
-                <audio src="https://files.catbox.moe/694apk.mp3" preload="metadata"></audio>
+            <div id="playlist-container" class="space-y-3 flex-grow overflow-y-auto pr-2 pb-8">
+                <!-- Playlist items injected via JS -->
             </div>
-
-            <!-- Track 2 -->
-            <div class="track-card bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(166,124,82,0.06)] border border-brown-100 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(166,124,82,0.12)] hover:-translate-y-1">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                    <button class="play-btn group flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-full bg-brown-50 text-brown-500 hover:bg-brown-500 hover:text-white transition-all duration-300 shadow-sm border border-brown-100" aria-label="Play Sangeethame">
-                        <i class="ph-fill ph-play text-2xl transition-transform group-hover:scale-110"></i>
-                    </button>
-                    
-                    <div class="flex-grow">
-                        <h3 class="text-lg font-medium text-brown-900 mb-1">Sangeethame</h3>
-                        <p class="text-sm text-brown-500 mb-3">Classical / Devotional</p>
-                        
-                        <div class="flex items-center gap-4">
-                            <span class="text-xs font-medium text-brown-400 w-10 text-right current-time">0:00</span>
-                            <input type="range" class="progress-bar flex-grow" value="0" max="100">
-                            <span class="text-xs font-medium text-brown-400 w-10 duration-time">--:--</span>
-                        </div>
-                    </div>
-                </div>
-                <audio src="https://files.catbox.moe/k7w9lh.mp3" preload="metadata"></audio>
-            </div>
-
-            <!-- Track 3 -->
-            <div class="track-card bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(166,124,82,0.06)] border border-brown-100 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(166,124,82,0.12)] hover:-translate-y-1">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                    <button class="play-btn group flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-full bg-brown-50 text-brown-500 hover:bg-brown-500 hover:text-white transition-all duration-300 shadow-sm border border-brown-100" aria-label="Play Pazhanimalai murugante">
-                        <i class="ph-fill ph-play text-2xl transition-transform group-hover:scale-110"></i>
-                    </button>
-                    
-                    <div class="flex-grow">
-                        <h3 class="text-lg font-medium text-brown-900 mb-1">Pazhanimalai Murugante</h3>
-                        <p class="text-sm text-brown-500 mb-3">Classical / Devotional</p>
-                        
-                        <div class="flex items-center gap-4">
-                            <span class="text-xs font-medium text-brown-400 w-10 text-right current-time">0:00</span>
-                            <input type="range" class="progress-bar flex-grow" value="0" max="100">
-                            <span class="text-xs font-medium text-brown-400 w-10 duration-time">--:--</span>
-                        </div>
-                    </div>
-                </div>
-                <audio src="https://files.catbox.moe/hixc2q.mp3" preload="metadata"></audio>
-            </div>
-
-            <!-- Track 4 -->
-            <div class="track-card bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(166,124,82,0.06)] border border-brown-100 transition-all duration-300 hover:shadow-[0_8px_30px_rgb(166,124,82,0.12)] hover:-translate-y-1">
-                <div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                    <button class="play-btn group flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-full bg-brown-50 text-brown-500 hover:bg-brown-500 hover:text-white transition-all duration-300 shadow-sm border border-brown-100" aria-label="Play Kali Badrakali">
-                        <i class="ph-fill ph-play text-2xl transition-transform group-hover:scale-110"></i>
-                    </button>
-                    
-                    <div class="flex-grow">
-                        <h3 class="text-lg font-medium text-brown-900 mb-1">Kali Badrakali</h3>
-                        <p class="text-sm text-brown-500 mb-3">Classical / Devotional</p>
-                        
-                        <div class="flex items-center gap-4">
-                            <span class="text-xs font-medium text-brown-400 w-10 text-right current-time">0:00</span>
-                            <input type="range" class="progress-bar flex-grow" value="0" max="100">
-                            <span class="text-xs font-medium text-brown-400 w-10 duration-time">--:--</span>
-                        </div>
-                    </div>
-                </div>
-                <audio src="https://files.catbox.moe/lvsic1.mp3" preload="metadata"></audio>
-            </div>
-
         </div>
     </main>
 
-    <footer class="bg-brown-900 text-brown-200 py-8 text-center border-t border-brown-800">
-        <div class="max-w-4xl mx-auto px-6">
-            <p class="font-serif text-lg text-white mb-2">Charukesi Sangeetha Nritha Kalakshetram</p>
-            <p class="text-sm text-brown-400 mb-4">Cultivating the soul through divine melodies.</p>
-            <p class="text-xs text-brown-500">&copy; <script>document.write(new Date().getFullYear())</script> All Rights Reserved.</p>
-        </div>
-    </footer>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const trackCards = document.querySelectorAll('.track-card');
-            
-            // Format time helper function
-            const formatTime = (time) => {
-                if (isNaN(time)) return "0:00";
-                const minutes = Math.floor(time / 60);
-                const seconds = Math.floor(time % 60);
-                return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            // Track Data
+            const tracks = [
+                { id: 0, title: "Shanmugha sodari", url: "https://files.catbox.moe/694apk.mp3" },
+                { id: 1, title: "Sangeethame", url: "https://files.catbox.moe/k7w9lh.mp3" },
+                { id: 2, title: "Pazhanimalai murugante", url: "https://files.catbox.moe/hixc2q.mp3" },
+                { id: 3, title: "Kali Badrakali", url: "https://files.catbox.moe/lvsic1.mp3" }
+            ];
+
+            // DOM Elements
+            const audio = document.getElementById('main-audio');
+            const playBtn = document.getElementById('btn-play');
+            const playIcon = document.getElementById('play-icon');
+            const prevBtn = document.getElementById('btn-prev');
+            const nextBtn = document.getElementById('btn-next');
+            const progressBar = document.getElementById('progress-bar');
+            const progressFill = document.getElementById('progress-fill');
+            const currentTimeEl = document.getElementById('current-time');
+            const durationTimeEl = document.getElementById('duration-time');
+            const currentTitleEl = document.getElementById('current-title');
+            const recordArt = document.getElementById('record-art');
+            const playlistContainer = document.getElementById('playlist-container');
+
+            // State
+            let currentTrackIndex = 0;
+            let isPlaying = false;
+            let isDragging = false;
+
+            // Format time in MM:SS
+            const formatTime = (seconds) => {
+                if (isNaN(seconds) || seconds < 0) return "0:00";
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return mins + ":" + (secs < 10 ? "0" : "") + secs;
             };
 
-            // Global function to pause all audio except the one currently playing
-            const pauseAllOtherAudio = (currentAudio) => {
-                trackCards.forEach(card => {
-                    const audio = card.querySelector('audio');
-                    const playIcon = card.querySelector('.play-btn i');
-                    const playBtn = card.querySelector('.play-btn');
+            // Render playlist items dynamically
+            const renderPlaylist = () => {
+                playlistContainer.innerHTML = '';
+                tracks.forEach((track, index) => {
+                    const isActive = index === currentTrackIndex;
                     
-                    if (audio !== currentAudio) {
-                        audio.pause();
-                        playIcon.classList.remove('ph-pause');
-                        playIcon.classList.add('ph-play');
-                        // Reset playing state styling
-                        playBtn.classList.remove('bg-brown-500', 'text-white', 'shadow-inner');
-                        playBtn.classList.add('bg-brown-50', 'text-brown-500');
-                    }
+                    const item = document.createElement('div');
+                    item.className = 'group flex items-center p-4 rounded-2xl cursor-pointer transition-all duration-300 ' + 
+                                     (isActive ? 'bg-white shadow-md border-l-4 border-brown-500' : 'bg-transparent hover:bg-white/50 border-l-4 border-transparent');
+                    
+                    item.innerHTML = 
+                        '<div class="w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center mr-4 transition-colors ' + 
+                        (isActive ? 'bg-brown-100 text-brown-600' : 'bg-brown-50 text-brown-300 group-hover:bg-brown-100 group-hover:text-brown-500') + '">' +
+                            (isActive && isPlaying ? '<i class="ph-fill ph-speaker-high text-xl"></i>' : '<i class="ph-fill ph-music-note text-xl"></i>') +
+                        '</div>' +
+                        '<div class="flex-grow overflow-hidden">' +
+                            '<h4 class="font-medium truncate transition-colors ' + (isActive ? 'text-brown-900' : 'text-brown-700 group-hover:text-brown-900') + '">' + track.title + '</h4>' +
+                            '<p class="text-xs text-brown-400 mt-0.5">Track 0' + (index + 1) + '</p>' +
+                        '</div>';
+
+                    item.addEventListener('click', () => {
+                        if (currentTrackIndex === index) {
+                            togglePlay();
+                        } else {
+                            loadTrack(index);
+                            playAudio();
+                        }
+                    });
+
+                    playlistContainer.appendChild(item);
                 });
             };
 
-            trackCards.forEach(card => {
-                const audio = card.querySelector('audio');
-                const playBtn = card.querySelector('.play-btn');
-                const playIcon = playBtn.querySelector('i');
-                const progressBar = card.querySelector('.progress-bar');
-                const currentTimeEl = card.querySelector('.current-time');
-                const durationEl = card.querySelector('.duration-time');
+            // Load a specific track
+            const loadTrack = (index) => {
+                currentTrackIndex = index;
+                const track = tracks[currentTrackIndex];
                 
-                let isDragging = false;
-
-                // Load metadata to set duration
-                audio.addEventListener('loadedmetadata', () => {
-                    durationEl.textContent = formatTime(audio.duration);
-                    progressBar.max = audio.duration;
-                });
-
-                // Play / Pause toggler
-                playBtn.addEventListener('click', () => {
-                    if (audio.paused) {
-                        pauseAllOtherAudio(audio);
-                        audio.play();
-                        playIcon.classList.remove('ph-play');
-                        playIcon.classList.add('ph-pause');
-                        
-                        // Active state styling
-                        playBtn.classList.add('bg-brown-500', 'text-white', 'shadow-inner');
-                        playBtn.classList.remove('bg-brown-50', 'text-brown-500');
-                    } else {
-                        audio.pause();
-                        playIcon.classList.remove('ph-pause');
-                        playIcon.classList.add('ph-play');
-                        
-                        // Revert active state styling
-                        playBtn.classList.remove('bg-brown-500', 'text-white', 'shadow-inner');
-                        playBtn.classList.add('bg-brown-50', 'text-brown-500');
-                    }
-                });
-
-                // Update progress bar as audio plays
-                audio.addEventListener('timeupdate', () => {
-                    if (!isDragging) {
-                        progressBar.value = audio.currentTime;
-                        currentTimeEl.textContent = formatTime(audio.currentTime);
-                        
-                        // Update background of range slider (visual fill)
-                        const percentage = (audio.currentTime / audio.duration) * 100;
-                        progressBar.style.background = `linear-gradient(to right, #a67c52 ${percentage}%, #ebdccd ${percentage}%)`;
-                    }
-                });
-
-                // User interacts with progress bar
-                progressBar.addEventListener('mousedown', () => isDragging = true);
-                progressBar.addEventListener('touchstart', () => isDragging = true);
+                audio.src = track.url;
+                currentTitleEl.textContent = track.title;
                 
-                progressBar.addEventListener('input', () => {
-                    currentTimeEl.textContent = formatTime(progressBar.value);
-                    const percentage = (progressBar.value / audio.duration) * 100;
-                    progressBar.style.background = `linear-gradient(to right, #a67c52 ${percentage}%, #ebdccd ${percentage}%)`;
-                });
+                // Reset progress
+                progressBar.value = 0;
+                progressFill.style.width = '0%';
+                currentTimeEl.textContent = "0:00";
+                
+                renderPlaylist();
+            };
 
-                progressBar.addEventListener('mouseup', () => {
-                    isDragging = false;
-                    audio.currentTime = progressBar.value;
-                });
-                progressBar.addEventListener('touchend', () => {
-                    isDragging = false;
-                    audio.currentTime = progressBar.value;
-                });
+            // Play the audio
+            const playAudio = () => {
+                isPlaying = true;
+                audio.play().catch(e => console.error("Error playing audio:", e));
+                playIcon.classList.remove('ph-play');
+                playIcon.classList.add('ph-pause');
+                playIcon.classList.remove('ml-1'); // fix pause icon centering
+                recordArt.classList.add('playing');
+                renderPlaylist();
+            };
 
-                // Reset UI when audio ends
-                audio.addEventListener('ended', () => {
-                    playIcon.classList.remove('ph-pause');
-                    playIcon.classList.add('ph-play');
-                    playBtn.classList.remove('bg-brown-500', 'text-white', 'shadow-inner');
-                    playBtn.classList.add('bg-brown-50', 'text-brown-500');
-                    progressBar.value = 0;
-                    currentTimeEl.textContent = formatTime(0);
-                    progressBar.style.background = '#ebdccd';
-                });
+            // Pause the audio
+            const pauseAudio = () => {
+                isPlaying = false;
+                audio.pause();
+                playIcon.classList.remove('ph-pause');
+                playIcon.classList.add('ph-play');
+                playIcon.classList.add('ml-1'); // adjust play icon centering
+                recordArt.classList.remove('playing');
+                renderPlaylist();
+            };
+
+            // Toggle Play/Pause
+            const togglePlay = () => {
+                if (isPlaying) {
+                    pauseAudio();
+                } else {
+                    playAudio();
+                }
+            };
+
+            // Previous track logic
+            const prevTrack = () => {
+                let newIndex = currentTrackIndex - 1;
+                if (newIndex < 0) newIndex = tracks.length - 1;
+                loadTrack(newIndex);
+                if (isPlaying) playAudio();
+            };
+
+            // Next track logic
+            const nextTrack = () => {
+                let newIndex = currentTrackIndex + 1;
+                if (newIndex >= tracks.length) newIndex = 0;
+                loadTrack(newIndex);
+                if (isPlaying) playAudio();
+            };
+
+            // Event Listeners for controls
+            playBtn.addEventListener('click', togglePlay);
+            prevBtn.addEventListener('click', prevTrack);
+            nextBtn.addEventListener('click', nextTrack);
+
+            // Audio Metadata loaded
+            audio.addEventListener('loadedmetadata', () => {
+                durationTimeEl.textContent = formatTime(audio.duration);
+                progressBar.max = audio.duration;
             });
-        });
-    </script>
-</body>
-</html>
-```Listeners for Audio Element
-        audioEl.addEventListener('play', () => {
-            recordArt.classList.add('spinning');
-            renderPlaylist(); // Update play/pause icon in playlist
-        });
 
-        audioEl.addEventListener('pause', () => {
-            recordArt.classList.remove('spinning');
-            renderPlaylist(); // Update play/pause icon in playlist
-        });
+            // Audio time updates
+            audio.addEventListener('timeupdate', () => {
+                if (!isDragging && !isNaN(audio.duration)) {
+                    progressBar.value = audio.currentTime;
+                    currentTimeEl.textContent = formatTime(audio.currentTime);
+                    
+                    const progressPercent = (audio.currentTime / audio.duration) * 100;
+                    progressFill.style.width = progressPercent + '%';
+                }
+            });
 
-        audioEl.addEventListener('ended', () => {
-            // Auto-play next track
-            if (currentTrackIndex < tracks.length - 1) {
-                loadAndPlayTrack(currentTrackIndex + 1);
-            } else {
-                recordArt.classList.remove('spinning');
-                renderPlaylist();
-            }
-        });
+            // Handle track ending
+            audio.addEventListener('ended', () => {
+                nextTrack();
+            });
 
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            renderPlaylist();
+            // Progress bar interactions (scrubbing)
+            progressBar.addEventListener('mousedown', () => { isDragging = true; });
+            progressBar.addEventListener('touchstart', () => { isDragging = true; }, { passive: true });
             
-            // Preload first track title without playing
-            if(tracks.length > 0) {
-                audioEl.src = tracks[0].src;
-                currentTitleEl.textContent = tracks[0].title;
-                currentTrackIndex = 0;
-                renderPlaylist();
-            }
+            progressBar.addEventListener('input', () => {
+                currentTimeEl.textContent = formatTime(progressBar.value);
+                if (!isNaN(audio.duration)) {
+                    const progressPercent = (progressBar.value / audio.duration) * 100;
+                    progressFill.style.width = progressPercent + '%';
+                }
+            });
+
+            const finishScrubbing = () => {
+                if (isDragging) {
+                    isDragging = false;
+                    audio.currentTime = progressBar.value;
+                }
+            };
+
+            progressBar.addEventListener('mouseup', finishScrubbing);
+            progressBar.addEventListener('touchend', finishScrubbing);
+            
+            // Initialize the player
+            loadTrack(currentTrackIndex);
         });
     </script>
 </body>
 </html>
-```   = document.getElementById('next');
-  const seek        = document.getElementById('seek');
-  const volume      = document.getElementById('volume');
-  const current     = document.getElementById('current');
-  const duration    = document.getElementById('duration');
-  const songTitle   = document.getElementById('songTitle');
-  const songSub     = document.getElementById('songSub');
-  const playlistEl  = document.getElementById('playlist');
-  const playerEl    = document.getElementById('player');
-  const expandBtn   = document.getElementById('expandBtn');
-  const expandIcon  = document.getElementById('expandIcon');
-  const cover       = document.getElementById('cover');
-
-  let currentIndex = 0;
-  let isPlaying = false;
-
-  const PAUSE_ICON = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
-  const PLAY_ICON  = '<path d="M8 5v14l11-7z"/>';
-
-  /* ---------- Build Playlist ---------- */
-  function buildPlaylist() {
-    playlistEl.innerHTML = '';
-    tracks.forEach((t, i) => {
-      const li = document.createElement('li');
-      li.className = 'track' + (i === currentIndex ? ' active' : '');
-      li.innerHTML = `
-        <div class="num">${i + 1}</div>
-        <div class="meta">
-          <h3>${t.title}</h3>
-          <p>${t.artist}</p>
-        </div>
-        ${i === currentIndex && isPlaying ? '<div class="eq"><span></span><span></span><span></span></div>' : ''}
-      `;
-      li.addEventListener('click', () => { loadTrack(i); play(); });
-      playlistEl.appendChild(li);
-    });
-  }
-
-  /* ---------- Load Track ---------- */
-  function loadTrack(index) {
-    currentIndex = index;
-    const t = tracks[index];
-    audio.src = t.src;
-    audio.load();
-    songTitle.textContent = t.title;
-    songSub.textContent = `Track ${index + 1} of ${tracks.length}`;
-    document.title = `${t.title} — Charukesi Karoke`;
-    buildPlaylist();
-  }
-
-  /* ---------- Play / Pause ---------- */
-  function play() {
-    audio.play().then(() => {
-      isPlaying = true;
-      playerEl.classList.add('playing');
-      playIcon.innerHTML = PAUSE_ICON;
-      buildPlaylist();
-    }).catch(err => console.warn('Play error:', err));
-  }
-
-  function pause() {
-    audio.pause();
-    isPlaying = false;
-    playerEl.classList.remove('playing');
-    playIcon.innerHTML = PLAY_ICON;
-    buildPlaylist();
-  }
-
-  function togglePlay() { isPlaying ? pause() : play(); }
-
-  function nextTrack() { loadTrack((currentIndex + 1) % tracks.length); play(); }
-  function prevTrack() {
-    if (audio.currentTime > 3) { audio.currentTime = 0; return; }
-    loadTrack((currentIndex - 1 + tracks.length) % tracks.length);
-    play();
-  }
-
-  /* ---------- Time Helpers ---------- */
-  function fmt(s) {
-    if (!isFinite(s)) return '0:00';
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60).toString().padStart(2, '0');
-    return `${m}:${sec}`;
-  }
-
-  function updateSliderFill(el) {
-    const p = ((el.value - el.min) / (el.max - el.min)) * 100;
-    el.style.setProperty('--p', p + '%');
-    el.classList.add('filled');
-  }
-
-  /* ---------- Events ---------- */
-  playBtn.addEventListener('click', togglePlay);
-  nextBtn.addEventListener('click', nextTrack);
-  prevBtn.addEventListener('click', prevTrack);
-
-  audio.addEventListener('loadedmetadata', () => {
-    duration.textContent = fmt(audio.duration);
-  });
-
-  audio.addEventListener('timeupdate', () => {
-    if (audio.duration) {
-      seek.value = (audio.currentTime / audio.duration) * 100;
-      updateSliderFill(seek);
-      current.textContent = fmt(audio.currentTime);
-    }
-  });
-
-  audio.addEventListener('ended', nextTrack);
-
-  seek.addEventListener('input', () => {
-    if (audio.duration) {
-      audio.currentTime = (seek.value / 100) * audio.duration;
-      updateSliderFill(seek);
-    }
-  });
-
-  volume.addEventListener('input', () => {
-    audio.volume = volume.value;
-    updateSliderFill(volume);
-  });
-
-  /* Expand / Collapse */
-  expandBtn.addEventListener('click', () => {
-    playerEl.classList.toggle('expanded');
-    const expanded = playerEl.classList.contains('expanded');
-    expandIcon.innerHTML = expanded
-      ? '<polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line>'
-      : '<polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>';
-  });
-
-  /* Keyboard shortcuts */
-  document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
-    if (e.code === 'ArrowRight') nextTrack();
-    if (e.code === 'ArrowLeft') prevTrack();
-  });
-
-  /* Init */
-  loadTrack(0);
-  updateSliderFill(seek);
-  updateSliderFill(volume);
-</script>
-
-</body>
-  </html>
