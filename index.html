@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Charukesi Karoke</title>
+<link rel="icon" href="https://plain-apac-prod-public.komododecks.com/202610/09/DNGr604lqMrOHA75SINW/image.jpg" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --text: #1a1d29;
+    --muted: #7a8194;
+    --accent: #ff5f6d;
+    --accent-2: #ffc371;
+    --shadow: 0 20px 50px rgba(30, 40, 90, 0.12);
+    --shadow-sm: 0 6px 20px rgba(30, 40, 90, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', system-ui, sans-serif;
+    background: radial-gradient(circle at 20% 0%, #ffe9ec 0%, transparent 45%),
+                radial-gradient(circle at 90% 100%, #e7f0ff 0%, transparent 45%),
+                var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .player {
+    width: 100%;
+    max-width: 520px;
+    background: var(--card);
+    border-radius: 32px;
+    box-shadow: var(--shadow);
+    padding: 28px;
+    transition: max-width 0.35s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .player.expanded {
+    max-width: 960px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid #fff;
+  }
+
+  .title-wrap h1 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+
+  .title-wrap p {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .expand-btn {
+    margin-left: auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: none;
+    background: #f1f3f9;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    transition: 0.25s;
+  }
+
+  .expand-btn:hover { background: #e6e9f4; color: var(--text); transform: scale(1.05); }
+
+  /* Layout when expanded */
+  .body-grid {
+    display: flex;
+    gap: 28px;
+  }
+
+  .left-col { flex: 1; min-width: 0; }
+  .right-col {
+    width: 320px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: 0.35s ease;
+  }
+
+  .player.expanded .right-col {
+    max-height: 600px;
+    opacity: 1;
+  }
+
+  /* Album art */
+  .art-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 24px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffe0e6, #fff3d6);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    place-items: center;
+  }
+
+  .art-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .art-wrap .pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    background: radial-gradient(circle, rgba(255,95,109,0.25), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .player.playing .art-wrap .pulse { opacity: 1; animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity: .35; }
+    50% { transform: scale(1.06); opacity: .6; }
+  }
+
+  /* Song info */
+  .song-info { text-align: center; margin: 20px 0 18px; }
+  .song-info h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.3px; }
+  .song-info p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+  /* Progress */
+  .progress-row {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.72rem; color: var(--muted);
+    margin-bottom: 18px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 6px;
+    border-radius: 10px;
+    background: #eceef7;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 2px 6px rgba(255,95,109,.45);
+    transition: transform .15s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  input[type="range"].filled {
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) var(--p,0%), #eceef7 var(--p,0%));
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 22px;
+  }
+
+  .ctrl-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--muted);
+    display: grid;
+    place-items: center;
+    transition: 0.2s;
+  }
+  .ctrl-btn:hover { color: var(--text); transform: scale(1.1); }
+
+  .play-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 12px 28px rgba(255,95,109,.4);
+    transition: 0.25s;
+  }
+  .play-btn:hover { transform: scale(1.06); box-shadow: 0 14px 34px rgba(255,95,109,.55); }
+
+  /* Playlist */
+  .playlist-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .playlist { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+    background: #fafbff;
+  }
+  .track:hover { background: #f1f3fb; transform: translateX(3px); }
+  .track.active {
+    background: linear-gradient(135deg, #fff0f2, #fff8e9);
+    box-shadow: inset 0 0 0 1px rgba(255,95,109,.25);
+  }
+
+  .track .num {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    background: #eceef7;
+    display: grid; place-items: center;
+    font-size: .72rem; font-weight: 600; color: var(--muted);
+    flex-shrink: 0;
+  }
+  .track.active .num { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; }
+
+  .track .meta { flex: 1; min-width: 0; }
+  .track .meta h3 { font-size: 0.85rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track .meta p { font-size: 0.7rem; color: var(--muted); }
+
+  .track .eq { display: flex; gap: 2px; align-items: flex-end; height: 16px; }
+  .track .eq span {
+    width: 3px; background: var(--accent); border-radius: 2px;
+    animation: eq 0.9s infinite ease-in-out;
+  }
+  .track .eq span:nth-child(1){ animation-delay: 0s; }
+  .track .eq span:nth-child(2){ animation-delay: .2s; }
+  .track .eq span:nth-child(3){ animation-delay: .4s; }
+
+  @keyframes eq {
+    0%,100% { height: 4px; }
+    50% { height: 16px; }
+  }
+
+  /* Volume */
+  .volume-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid #f0f2f8;
+    color: var(--muted);
+  }
+
+  /* Mobile */
+  @media (max-width: 760px) {
+    .body-grid { flex-direction: column; }
+    .right-col { width: 100%; }
+    .player.expanded .right-col { max-height: 500px; }
+  }
+
+  audio { display: none; }
+</style>
+</head>
+<body>
+
+<div class="player" id="player">
+  <div class="header">
+    <img class="logo" src="https://plain-apac-prod-public.komododecks.com/202610/09/DNGr604lqMrOHA75SINW/image.jpg" alt="Charukesi Karoke" />
+    <div class="title-wrap">
+      <h1>Charukesi Karoke</h1>
+      <p>Sing along 🎤</p>
+    </div>
+    <button class="expand-btn" id="expandBtn" title="Expand / Collapse">
+      <svg id="expandIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <polyline points="9 21 3 21 3 15"></polyline>
+        <line x1="21" y1="3" x2="14" y2="10"></line>
+        <line x1="3" y1="21" x2="10" y2="14"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="body-grid">
+    <!-- LEFT -->
+    <div class="left-col">
+      <div class="art-wrap">
+        <img id="cover" src="https://plain-apac-prod-public.komododecks.com/202610/09/DNGr604lqMrOHA75SINW/image.jpg" alt="cover" />
+        <div class="pulse"></div>
+      </div>
+
+      <div class="song-info">
+        <h2 id="songTitle">Shanmugha Sodari</h2>
+        <p id="songSub">Track 1 of 4</p>
+      </div>
+
+      <div class="progress-row">
+        <span id="current">0:00</span>
+        <input type="range" id="seek" value="0" min="0" max="100" step="0.1" />
+        <span id="duration">0:00</span>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl-btn" id="prev" title="Previous">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+        </button>
+        <button class="play-btn" id="play" title="Play">
+          <svg id="playIcon" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <button class="ctrl-btn" id="next" title="Next">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+        </button>
+      </div>
+
+      <div class="volume-row">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="1" />
+      </div>
+    </div>
+
+    <!-- RIGHT (Playlist) -->
+    <div class="right-col">
+      <div class="playlist-title">Playlist</div>
+      <ul class="playlist" id="playlist"></ul>
+    </div>
+  </div>
+
+  <audio id="audio" crossorigin="anonymous"></audio>
+</div>
+
+<script>
+  const tracks = [
+    { title: "Shanmugha Sodari",      artist: "Karoke Track", src: "https://sufficient-lavender-grfcmggi.edgeone.dev/" },
+    { title: "Pazhanimalai Murugante", artist: "Karoke Track", src: "https://soviet-coral-tm5eyrih.edgeone.dev/" },
+    { title: "Kali Badrakali",         artist: "Karoke Track", src: "https://hilarious-tomato-pqcysod9.edgeone.dev/" },
+    { title: "Sangeethame",            artist: "Karoke Track", src: "https://genetic-silver-7epglid9.edgeone.dev/" }
+  ];
+
+  const audio       = document.getElementById('audio');
+  const playBtn     = document.getElementById('play');
+  const playIcon    = document.getElementById('playIcon');
+  const prevBtn     = document.getElementById('prev');
+  const nextBtn     = document.getElementById('next');
+  const seek        = document.getElementById('seek');
+  const volume      = document.getElementById('volume');
+  const current     = document.getElementById('current');
+  const duration    = document.getElementById('duration');
+  const songTitle   = document.getElementById('songTitle');
+  const songSub     = document.getElementById('songSub');
+  const playlistEl  = document.getElementById('playlist');
+  const playerEl    = document.getElementById('player');
+  const expandBtn   = document.getElementById('expandBtn');
+  const expandIcon  = document.getElementById('expandIcon');
+  const cover       = document.getElementById('cover');
+
+  let currentIndex = 0;
+  let isPlaying = false;
+
+  const PAUSE_ICON = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+  const PLAY_ICON  = '<path d="M8 5v14l11-7z"/>';
+
+  /* ---------- Build Playlist ---------- */
+  function buildPlaylist() {
+    playlistEl.innerHTML = '';
+    tracks.forEach((t, i) => {
+      const li = document.createElement('li');
+      li.className = 'track' + (i === currentIndex ? ' active' : '');
+      li.innerHTML = `
+        <div class="num">${i + 1}</div>
+        <div class="meta">
+          <h3>${t.title}</h3>
+          <p>${t.artist}</p>
+        </div>
+        ${i === currentIndex && isPlaying ? '<div class="eq"><span></span><span></span><span></span></div>' : ''}
+      `;
+      li.addEventListener('click', () => { loadTrack(i); play(); });
+      playlistEl.appendChild(li);
+    });
+  }
+
+  /* ---------- Load Track ---------- */
+  function loadTrack(index) {
+    currentIndex = index;
+    const t = tracks[index];
+    audio.src = t.src;
+    audio.load();
+    songTitle.textContent = t.title;
+    songSub.textContent = `Track ${index + 1} of ${tracks.length}`;
+    document.title = `${t.title} — Charukesi Karoke`;
+    buildPlaylist();
+  }
+
+  /* ---------- Play / Pause ---------- */
+  function play() {
+    audio.play().then(() => {
+      isPlaying = true;
+      playerEl.classList.add('playing');
+      playIcon.innerHTML = PAUSE_ICON;
+      buildPlaylist();
+    }).catch(err => console.warn('Play error:', err));
+  }
+
+  function pause() {
+    audio.pause();
+    isPlaying = false;
+    playerEl.classList.remove('playing');
+    playIcon.innerHTML = PLAY_ICON;
+    buildPlaylist();
+  }
+
+  function togglePlay() { isPlaying ? pause() : play(); }
+
+  function nextTrack() { loadTrack((currentIndex + 1) % tracks.length); play(); }
+  function prevTrack() {
+    if (audio.currentTime > 3) { audio.currentTime = 0; return; }
+    loadTrack((currentIndex - 1 + tracks.length) % tracks.length);
+    play();
+  }
+
+  /* ---------- Time Helpers ---------- */
+  function fmt(s) {
+    if (!isFinite(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60).toString().padStart(2, '0');
+    return `${m}:${sec}`;
+  }
+
+  function updateSliderFill(el) {
+    const p = ((el.value - el.min) / (el.max - el.min)) * 100;
+    el.style.setProperty('--p', p + '%');
+    el.classList.add('filled');
+  }
+
+  /* ---------- Events ---------- */
+  playBtn.addEventListener('click', togglePlay);
+  nextBtn.addEventListener('click', nextTrack);
+  prevBtn.addEventListener('click', prevTrack);
+
+  audio.addEventListener('loadedmetadata', () => {
+    duration.textContent = fmt(audio.duration);
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      seek.value = (audio.currentTime / audio.duration) * 100;
+      updateSliderFill(seek);
+      current.textContent = fmt(audio.currentTime);
+    }
+  });
+
+  audio.addEventListener('ended', nextTrack);
+
+  seek.addEventListener('input', () => {
+    if (audio.duration) {
+      audio.currentTime = (seek.value / 100) * audio.duration;
+      updateSliderFill(seek);
+    }
+  });
+
+  volume.addEventListener('input', () => {
+    audio.volume = volume.value;
+    updateSliderFill(volume);
+  });
+
+  /* Expand / Collapse */
+  expandBtn.addEventListener('click', () => {
+    playerEl.classList.toggle('expanded');
+    const expanded = playerEl.classList.contains('expanded');
+    expandIcon.innerHTML = expanded
+      ? '<polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line>'
+      : '<polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>';
+  });
+
+  /* Keyboard shortcuts */
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+    if (e.code === 'ArrowRight') nextTrack();
+    if (e.code === 'ArrowLeft') prevTrack();
+  });
+
+  /* Init */
+  loadTrack(0);
+  updateSliderFill(seek);
+  updateSliderFill(volume);
+</script>
+
+</body>
+  </html>
